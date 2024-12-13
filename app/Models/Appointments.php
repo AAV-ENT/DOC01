@@ -9,16 +9,28 @@ class Appointments extends Model
 {
     use HasFactory;
 
-    public function clients() {
-        return $this->belongsTo(Clients::class);
-    }
+    protected $fillable = [
+        'user_id',
+        'user_type',
+        'service_id',
+        'doctor_id',
+        'location_id',
+        'appointment_type',
+        'name',
+        'phone',
+        'email',
+        // 'ssn', 
+        'date',
+        'hour',
+        'minute'
+    ];
 
     public function doctor() {
-        return $this->hasMany(Doctor::class);
+        return $this->belongsToMany(Doctor::class, 'appointments_doctor');
     }
 
     public function services() {
-        return $this->hasMany(Services::class);
+        return $this->belongsToMany(Services::class, 'appointments_services');
     }
 
     public function user() {

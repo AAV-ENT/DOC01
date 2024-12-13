@@ -10,36 +10,8 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <!-- Form to Add a New Doctor -->
-                    <form method="post" action="{{ route('storeDoctor') }}">
-                        @csrf
-
-                        <!-- Doctor Name Input -->
-                        <div class="mb-4">
-                            <x-input-label for="name" :value="__('Nume doctor')" />
-                            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" required autofocus autocomplete="name" />
-                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                        </div>
-
-                        <!-- Services Selection -->
-                        <div class="mb-4">
-                            <x-input-label :value="__('Selectează servicii')" />
-                            <div class="mt-2 grid grid-cols-2 gap-2">
-                                @foreach($user->services as $service)
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="service-{{ $service->id }}" name="services[]" value="{{ $service->id }}" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                        <label for="service-{{ $service->id }}" class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $service->name }}</label>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <x-primary-button class="mt-4">
-                            {{ __('Adauga doctor') }}
-                        </x-primary-button>
-                    </form>
+                <div class="p-6 text-gray-900 dark:text-gray-100 flex justify-end">
+                    @include('management.doctor-partials.newDoctor')
                 </div>
             </div>
         </div>
@@ -49,24 +21,52 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-1 gap-10">
-                        <!-- Display List of Doctors -->
-                        @forelse($user->doctor as $doctor)
-                            <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $doctor->name }}</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ __('Doctori:') }}</p>
-                                <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
-                                    @forelse($doctor->services as $service)
-                                        <li>{{ $service->name }}</li>
-                                    @empty
-                                        <li class="text-gray-500 italic">{{ __('Niciun serviciu adăugat') }}</li>
-                                    @endforelse
-                                </ul>
+                    @foreach ($location as $loc)
+                        @php
+                            $i = 0;
+                        @endphp
+                            <div class="flex items-center gap-5">
+                                <h4 class="text-lg">{{ $loc->name }}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ $loc->address }}</p>
                             </div>
-                            @empty
-                                <li class="text-gray-500 italic">{{ __('Niciun doctor adăugat') }}</li>
-                        @endforelse
-                    </div>
+                            <div class="grid md:grid-cols-2 grid-cols-1 gap-10 my-2">
+                            @foreach ($user->doctor as $doctor)
+                                @if ($doctor->location_id == $loc->id)
+                                    @php
+                                        $i++;
+                                    @endphp
+                                    
+                                        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-md">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $doctor->name }}</h3>
+                                                    <p class="text-black dark:text-white">{{ $doctor->doctor_type }}</p>
+                                                </div>
+                                                <div>
+                                                    <a href="{{ route('doctor.edit', ['id' => $doctor->id]) }}"><button class="border-[2px] border-orange-500 mt-3 px-3 py-1 rounded-md hover:bg-orange-500 duration-100 ease-in">{{ __('Edit') }}</button></a>
+                                                </div>
+                                            </div>
+                                            {{-- <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ __('Servicii:') }}</p>
+                                            <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
+                                                @forelse($doctor->services as $service)
+                                                    <li>{{ $service->name }}</li>
+                                                @empty
+                                                    <li class="text-gray-500 italic">{{ __('Niciun serviciu adăugat') }}</li>
+                                                @endforelse
+                                            </ul> --}}
+                                        </div>
+                                    
+                                @endif
+                            @endforeach
+                        </div>
+                            @php
+                                if($i == 0) {
+                                    echo '<div class="mb-5 mt-2 bg-gray-100 dark:bg-gray-700 rounded-md py-3 px-8">';
+                                        echo '<p class="font-bold">Locatia nu are servicii adaugate</p>';
+                                    echo '</div>';
+                                }
+                            @endphp
+                    @endforeach
                 </div>
             </div>
         </div>

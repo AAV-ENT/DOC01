@@ -11,19 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('locations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
             $table->string('name');
-            $table->string('phone');
-            $table->string('email');
-            $table->text('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-            $table->string('country')->nullable();
-            $table->string('ssn')->nullable();
+            $table->string('address', 1024);
+            $table->string('city');
+            $table->string('state');
+            $table->json('startingTime');
+            $table->json('endingTime');
             $table->timestamps();
         });
+
     }
 
     /**
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('locations');
     }
 };

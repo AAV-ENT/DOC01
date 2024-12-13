@@ -57,4 +57,16 @@ class User extends Authenticatable
     public function appointments() {
         return $this->hasMany(Appointments::class);
     }
+
+    public function location() {
+        return $this->hasMany(Location::class);
+    }
+
+    public function city() {
+        return $this->hasMany(Cities::class);
+    }
+
+    public function counties() {
+        return $this->hasMany(Counties::class);
+    }
 }

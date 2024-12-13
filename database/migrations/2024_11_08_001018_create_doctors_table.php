@@ -17,8 +17,12 @@ return new class extends Migration
         Schema::create('doctors', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->index();
+            $table->unsignedBigInteger('location_id')->index();
             $table->text('name');
-            // $table->text('services')->nullable();
+            $table->text('doctor_type');
+            $table->int('different_time')->default('0');
+            $table->json('startingTime')->nullable();
+            $table->json('endingTime')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

@@ -8,7 +8,11 @@ class Doctor extends Model
 {
     protected $fillable = [
         'name',
-        'services'
+        'services',
+        'location_id',
+        'doctor_type',
+        'startingTime',
+        'endingTime'
     ];
 
     public function user() {
@@ -21,5 +25,9 @@ class Doctor extends Model
 
     public function appointments() {
         return $this->belongsToMany(Appointments::class);
+    }
+
+    public function location() {
+        return $this->belongsToMany(Location::class);
     }
 }

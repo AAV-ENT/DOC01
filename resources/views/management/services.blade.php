@@ -9,61 +9,81 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form method="post" action="{{ route('createService') }}">
-                        @csrf
-
-                        <div>
-                            <x-input-label for="name" :value="__('Nume serviciu')" />
-                            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" required autofocus autocomplete="name" />
-                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                        </div>
-
-                        <div class="my-5">
-                            <x-input-label for="price" :value="__('Preț (in RON)')" />
-                            <x-text-input id="price" class="block mt-1 w-full" type="text" name="price" required autofocus autocomplete="price" />
-                            <x-input-error :messages="$errors->get('price')" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="duration" :value="__('Durată (in minute)')" />
-                            <x-text-input id="duration" class="block mt-1 w-full" type="text" name="duration" required autofocus autocomplete="duration" />
-                            <x-input-error :messages="$errors->get('duration')" class="mt-2" />
-                        </div>
-
-                        <x-primary-button class="mt-4">
-                            {{ __('Adauga serviciu') }}
-                        </x-primary-button>
-                    </form>
+                    <div class="flex items-center justify-end gap-2">
+                        @include('management.services-partials.newService')
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="pt-6">
+    <div class="pt-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-1 gap-10">
-                        @forelse($user->services as $service)
-                            <div class="bg-gray-100 dark:bg-gray-900 rounded-md py-3 px-8">
-                                <p class="text-xl font-bold">{{ $service->name }}</p>
-                                <div class="py-4">
-                                    <p>{{ __('Pret') }}: {{ $service->price }} {{ __('RON') }}</p>
-                                    <p>{{ __('Durata') }}: {{ $service->duration }} {{ __('min') }}</p>
-                                </div>
-                                <div class="flex gap-4">
-                                    <button class="bg-blue-600 px-2 py-1 rounded-md">{{ __('Edit') }}</button>
-                                    <button class="bg-red-600 px-2 py-1 rounded-md">{{ __('Sterge') }}</button>
-                                </div>
+                    @if(session('success'))
+                        <div class="bg-green-100 border mb-4 border-green-400 text-green-700 px-4 py-3 rounded relative mt-4 alert" role="alert">
+                            <strong class="font-bold">Success!</strong>
+                            <span class="block sm:inline">{{ session('success') }}</span>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="bg-red-100 border mb-4 border-red-400 text-red-700 px-4 py-3 rounded relative mt-4 alert" role="alert">
+                            <strong class="font-bold">Error!</strong>
+                            <span class="block sm:inline">{{ session('error') }}</span>
+                        </div>
+                    @endif
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const alert = document.querySelector('.alert');
+                            if (alert) {
+                                setTimeout(() => {
+                                    alert.remove();
+                                }, 3000); // Remove after 3 seconds
+                            }
+                        });
+                    </script>
+                    
+                    @foreach ($location as $loc)
+                        @php
+                            $i = 0;
+                        @endphp
+                            <div class="flex items-center gap-5">
+                                <h4 class="text-lg">{{ $loc->name }}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ $loc->address }}</p>
                             </div>
-                        @empty
-                            <li class="text-gray-500 italic">{{ __('Niciun serviciu adăugat') }}</li>
-                        @endforelse
-                    </div>
+                            @foreach ($user->services as $service)
+                                @if(in_array($loc->id, json_decode($service->location_id)))
+                                    @php
+                                        $i++;
+                                    @endphp
+                                    <div class="mb-5 mt-2 bg-gray-100 dark:bg-gray-700 rounded-md py-3 px-8">
+                                        <div class="flex justify-between items-center">
+                                            <p class="text-xl font-bold">{{ $service->name }}</p>
+                                            <div class="flex gap-4">
+                                               <a href="{{ route('services.edit', ['id' => $service->id]) }}"><button class="border-[2px] border-orange-500 px-3 py-1 rounded-md hover:bg-orange-500 duration-100 ease-in">{{ __('Edit') }}</button></a>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Pret') }}: {{ $service->price }} {{ __('RON') }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Durata') }}: {{ $service->duration }} {{ __('min') }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Descriere') }}: <br> <pre class="text-sm text-gray-600 dark:text-gray-400">{{ $service->description }}</pre></p>
+                                    </div>
+                                @endif
+                            @endforeach
+                            @php
+                                if($i == 0) {
+                                    echo '<div class="mb-5 mt-2 bg-gray-100 dark:bg-gray-700 rounded-md py-3 px-8">';
+                                        echo '<p class="font-bold">Locatia nu are servicii adaugate</p>';
+                                    echo '</div>';
+                                }
+                            @endphp
+                    @endforeach
                 </div>
             </div>
         </div>

@@ -10,6 +10,8 @@ class services extends Model
         'name',
         'price',
         'duration',
+        'description',
+        'location_id'
     ];
 
     public function user() {
@@ -22,5 +24,9 @@ class services extends Model
 
     public function appointments() {
         return $this->belongsToMany(Appointments::class);
+    }
+
+    public function location() {
+        return $this->belongsToMany(Location::class);
     }
 }

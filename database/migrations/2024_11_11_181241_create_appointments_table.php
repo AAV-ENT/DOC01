@@ -14,15 +14,16 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
-            $table->unsignedBigInteger('clients_id')->index()->nullable();
             $table->string('user_type')->nullable();
-            $table->unsignedBigInteger('created_by')->index();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('service_id')->index();
             $table->unsignedBigInteger('doctor_id')->index();
+            $table->unsignedBigInteger('location_id')->index();
             $table->string('appointment_type')->nullable();
-            $table->string('location')->nullable();
-            $table->string('city')->nullable();
-            $table->string('country')->nullable();
+            $table->string('name');
+            $table->string('email');
+            $table->string('phone');
+            $table->string('ssn')->nullable();
             $table->string('confirmed')->nullable(); // Yes, No
             $table->string('confirmation_type')->nullable(); // SMS, Phone Call
             $table->string('date');
